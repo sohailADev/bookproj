@@ -3,8 +3,8 @@ require  'vendor/autoload.php';
     try {
         $client         = new MongoDB\Client();
         $database       = $client -> myblogsite;
-        $articleCollection     = $database ->articles;
-
+        $collection     = $database ->articles;
+   
     }
     catch (MongoConnectionException $e)
     {
@@ -16,11 +16,24 @@ $articlesPerPage = 5;
 
 $skip = ($currentPage - 1) * $articlesPerPage;
 
-$cursor = $articleCollection->find(array(),array('title','saved_at'));
-$totalArticles = $cursor->count();
-$totalPages = (int) ceil($totalArticles / $articlesPerPage);
+$alldoc = $collection->find([] , ['title','saved_at'] );
 
-$cursor->sort(array('saved_at'=>-1))->skip($skip)->limit($articlesPerPage);?>
+
+$totalArticles = $collection->count(['title'=>1,'saved_at'=>1]);
+print_r($totalArticles);
+echo('i am here');
+
+$totalPages = (int) ceil($totalArticles / $articlesPerPage);
+// Create query object with all options:
+$query = new \MongoDB\Driver\Query(
+    [], // query (empty: select all)
+    [ 'sort' => [ 'saved_at'=>-1 ],'skip'=>$skip, 'limit' => 40 ] // options
+);
+//$cursor->sort(array('saved_at'=>-1))->skip($skip)->limit($articlesPerPage);
+
+$alldoc = $collection->find([] , ['title','saved_at'],['sort'=>['saved_at'=> -1]],['skip'=>$skip],['limit'=>$articlesPerPage]);
+
+?>
 <html>
     <head>
         <title>Dashboard</title>
@@ -44,19 +57,19 @@ $cursor->sort(array('saved_at'=>-1))->skip($skip)->limit($articlesPerPage);?>
                 </tr>
             </thead>
             <tbody>
-                <?php while($cursor->hasNext()):$article = $cursor->getNext();?>
+                <?php foreach($alldoc as $item){?>
                     <tr>
                             <td>
-                                <?php echo substr($article['title'], 0, 35). '...'; ?>
+                                <?php echo substr($item['title'], 0, 35). '...'; ?>
                             </td>
                             <td>
-                                 <?php print date('g:i a, F j',$article['saved_at']->sec);?>
+                                 <?php print date('g:i a, F j',$item['saved_at']->sec);?>
                             </td>
                             <td class="url">
-                              <a href="blog.php?id=<?php echo $article['_id']; ?>">View </a>
+                              <a href="blog.php?id=<?php echo $item['_id']; ?>">View </a>
                             </td>
                     </tr>
-                <?php endwhile;?>
+                <?php };?>
             </tbody>
         </table>
     </div>
