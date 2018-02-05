@@ -12,16 +12,15 @@ require  'vendor/autoload.php';
     }
 $currentPage = (isset($_GET['page'])) ? (int) $_GET['page'] : 1;
 
-$articlesPerPage = 5;
+$articlesPerPage =2;
 
 $skip = ($currentPage - 1) * $articlesPerPage;
 
 $alldoc = $collection->find([] , ['title','saved_at'] );
 
 
-$totalArticles = $collection->count(['title'=>1,'saved_at'=>1]);
-print_r($totalArticles);
-echo('i am here');
+$totalArticles = $collection->count(['title'=> 1,'saved_at' => 1]);
+
 
 $totalPages = (int) ceil($totalArticles / $articlesPerPage);
 // Create query object with all options:
@@ -63,7 +62,8 @@ $alldoc = $collection->find([] , ['title','saved_at'],['sort'=>['saved_at'=> -1]
                                 <?php echo substr($item['title'], 0, 35). '...'; ?>
                             </td>
                             <td>
-                                 <?php print date('g:i a, F j',$item['saved_at']->sec);?>
+                                 <?php print date('g:i a, F j',$item['saved_at']->date);
+                                ?>
                             </td>
                             <td class="url">
                               <a href="blog.php?id=<?php echo $item['_id']; ?>">View </a>
