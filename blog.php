@@ -1,5 +1,7 @@
 <?php
 require  'vendor/autoload.php';
+require 'helper.php';
+
 $id = $_GET['id'];
 
     try

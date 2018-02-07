@@ -1,6 +1,6 @@
 <?php
 require  'vendor/autoload.php';
-
+require  'helper.php';
     try {
         $client         = new MongoDB\Client();
         $database       = $client -> myblogsite;
@@ -28,6 +28,7 @@ require  'vendor/autoload.php';
         <h1>My Blogs</h1>
         <?php  if(!empty($cursor)) {foreach ($cursor as $item){?>
         <h2><?php echo $item['title']; ?></h2>
+        
         <p><?php echo substr($item['content'], 0,200).'...'; ?> </p><a href="blog.php?id=<?php echo $item['_id']; ?>">Read more</a>
           <?php }}
           else

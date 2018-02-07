@@ -62,7 +62,16 @@ $alldoc = $collection->find([] , ['title','saved_at'],['sort'=>['saved_at'=> -1]
                                 <?php echo substr($item['title'], 0, 35). '...'; ?>
                             </td>
                             <td>
-                                 <?php print date('g:i a, F j',$item['saved_at']->date);
+                           <?php //$a = new MongoDB\BSON\UTCDateTime((new DateTime())->getTimestamp()*1000);   -->
+                            
+                            
+
+                                    $datetime = $item['saved_at']->toDateTime();
+                                  //  $datetime->setTimezone(new DateTimeZone('Asia/Kolkata')); 
+                                    $time=$datetime->format(DATE_ATOM);  
+                                    $date = date('Y-m-d',strtotime($time));
+                                     print  $date;
+
                                 ?>
                             </td>
                             <td class="url">
